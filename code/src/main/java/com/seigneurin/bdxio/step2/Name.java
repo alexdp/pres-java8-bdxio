@@ -1,4 +1,4 @@
-package com.seigneurin.breizhcamp.step2;
+package com.seigneurin.bdxio.step2;
 
 public class Name {
 
@@ -13,4 +13,4 @@ public class Name {
     public String getFirstName() { return firstName; }
     public String getLastName() { return lastName; }
 
- }
+}

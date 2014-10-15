@@ -1,4 +1,4 @@
-package com.seigneurin.breizhcamp.step1;
+package com.seigneurin.bdxio.step1;
 
 @FunctionalInterface
 public interface ExampleInterface {

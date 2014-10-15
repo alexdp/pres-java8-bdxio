@@ -1,4 +1,4 @@
-package com.seigneurin.breizhcamp.step2;
+package com.seigneurin.bdxio.step2;
 
 @FunctionalInterface
 public interface Creator<T> {

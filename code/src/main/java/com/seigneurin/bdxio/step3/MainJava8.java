@@ -1,4 +1,4 @@
-package com.seigneurin.breizhcamp.step3;
+package com.seigneurin.bdxio.step3;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;

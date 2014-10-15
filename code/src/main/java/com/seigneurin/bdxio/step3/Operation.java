@@ -1,4 +1,4 @@
-package com.seigneurin.breizhcamp.step3;
+package com.seigneurin.bdxio.step3;
 
 public interface Operation<T> {
     T function();
