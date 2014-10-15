@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Java 8 - Les interfaces fonctionnelles - Alexis Seigneurin</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+      @import url(fonts/css_family_Yanone+Kaffeesatz);
+      @import url(fonts/css_family_Droid+Serif:400,700,400italic);
+      @import url(fonts/css_family_Ubuntu+Mono:400,700,400italic);
+
+      body {
+        font-family: 'Droid Serif';
+      }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+      .remark-slide-number { display: none; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+background-image: url(img/background.png)
+
+#Java 8 - Les interfaces fonctionnelles
+
+Alexis Seigneurin - [@aseigneurin](https://twitter.com/ASeigneurin)
+
+Ippon Technologies - [@ippontech](https://twitter.com/ippontech)
+
+---
+
+class: center, middle
+
+# Interfaces fonctionnelles ?
+
+---
+
+# Interface fonctionnelle
+
+* Interface avec une seule méthode abstraite
+* Méthodes par défaut = non-abstraites
+
+---
+
+# Annotation
+
+* @java.lang.FunctionalInterface
+
+```java
+@FunctionalInterface
+public interface ExampleInterface {
+
+    void doSomething();
+
+    default int methodWithDefaultImpl() {
+        return 0;
+    }
+
+}
+```
+
+---
+
+# Vérification par le compilateur
+
+```shell
+Unexpected @FunctionalInterface annotation
+
+com.seigneurin.ExampleInterface is not a functional interface
+
+multiple non-overriding abstract methods found in
+interface com.seigneurin.ExampleInterface
+```
+---
+
+class: center, middle
+
+# Retour en arrière
+
+---
+
+# Java 8
+
+* Callback = classes anonymes
+
+```java
+Button btn = new Button();
+btn.setOnAction(new EventHandler&lt;ActionEvent&gt;() {
+    @Override
+    public void handle(ActionEvent event) {
+        System.out.println("Hello World!");
+    }
+});
+```
+
+    </textarea>
+    <script src="remark/remark-latest.min.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
