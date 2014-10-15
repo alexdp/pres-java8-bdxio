@@ -15,8 +15,23 @@
         font-family: 'Yanone Kaffeesatz';
         font-weight: normal;
       }
-      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
-      .remark-slide-number { display: none; }
+      .remark-code, .remark-inline-code {
+        font-family: 'Ubuntu Mono';
+      }
+      .remark-slide-number {
+        display: none;
+      }
+      a {
+        color: #55ACEE;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .twitter {
+        height:0.8em;
+        padding:0 5px 0 5px;
+      }
     </style>
   </head>
   <body>
@@ -27,12 +42,11 @@ background-image: url(img/background.png)
 
 #Java 8 - Les interfaces fonctionnelles
 
-Alexis Seigneurin - [@aseigneurin](https://twitter.com/ASeigneurin)
+Alexis Seigneurin - <img src="img/Twitter_logo_blue.png" style="height:0.8em; padding:0 5px 0 5px;"/>[@aseigneurin](https://twitter.com/ASeigneurin)
 
-Ippon Technologies - [@ippontech](https://twitter.com/ippontech)
+Ippon Technologies - <img src="img/Twitter_logo_blue.png" class="twitter"/>[@ippontech](https://twitter.com/ippontech)
 
 ---
-
 class: center, middle
 
 # Interfaces fonctionnelles ?
@@ -76,7 +90,6 @@ multiple non-overriding abstract methods found in
 interface com.seigneurin.ExampleInterface
 ```
 ---
-
 class: center, middle
 
 # Retour en arrière
@@ -96,6 +109,269 @@ btn.setOnAction(new EventHandler&lt;ActionEvent&gt;() {
     }
 });
 ```
+
+---
+
+# Exemple
+
+* On veut parser des noms : NameParser
+* On délègue la création du nom : Creator
+
+---
+
+# Exemple
+
+```java
+public class NameParser {
+    public &lt;T&gt; T parse(String name, Creator&lt;T&gt; creator) {
+        String[] tokens = name.split(" ");
+        String firstName = tokens[0];
+        String lastName = tokens[1];
+        return creator.create(firstName, lastName);
+    }
+}
+
+public interface Creator&lt;T&gt; {
+    T create(String firstName, String lastName);
+}
+
+public class Name {
+   private String firstName;
+   private String lastName;
+
+   public Name(String firstName, String lastName) {
+       this.firstName = firstName;
+       this.lastName = lastName;
+   }
+
+   public String getFirstName() { return firstName; }
+   public String getLastName() { return lastName; }
+}
+```
+
+---
+
+# Classe anonyme
+
+```java
+NameParser parser = new NameParser();
+
+Name res = parser.parse("Eric Clapton", new Creator&lt;Name&gt;() {
+    @Override
+    public Name create(String firstName, String lastName) {
+        return new Name(firstName, lastName);
+    }
+});
+```
+
+---
+class: center, middle
+
+# Java 8
+
+---
+
+# @FunctionalInterface
+
+* Annotation optionnelle
+
+```java
+@FunctionalInterface
+public interface Creator&lt;T&gt; {
+    T create(String firstName, String lastName);
+}
+```
+
+---
+
+# Appel : une méthode...
+
+* Avec 2 paramètres de type String
+* Retour de type générique
+
+---
+
+# Code appelé...
+
+* Méthode create() simulée par le compilateur
+
+---
+
+# Référence vers un constructeur
+
+
+* Notation : "Classe::new"
+
+```java
+NameParser parser = new NameParser();
+
+Name res = parser.parse("Eric Clapton", Name::new);
+```
+
+---
+
+# Référence vers une méthode statique
+
+* Notation : "Classe::méthode"
+
+```java
+public class Factory {
+    public static Name createName(String firstName, String lastName) {
+        return new Name(firstName, lastName);
+    }
+}
+```
+```java
+NameParser parser = new NameParser();
+
+Name res = parser.parse("Eric Clapton", Factory::createName);
+```
+
+---
+
+# Référence vers une méthode d’instance
+
+* Notation : "instance::méthode"
+
+```java
+public class Factory {
+    public Name createName(String firstName, String lastName) {
+        return new Name(firstName, lastName);
+    }
+}
+```
+```java
+Factory factory = new Factory();
+NameParser parser = new NameParser();
+
+Name res = parser.parse("Eric Clapton", factory::createName);
+```
+
+---
+
+# Expression lambda
+```java
+Name res = parser.parse("Eric Clapton", (s1, s2) -> new Name(s1, s2));
+```
+```java
+Name res = parser.parse("Eric Clapton", (s1, s2) -> Factory.createName(s1, s2));
+```
+```java
+Factory factory = new Factory();
+Name res = parser.parse("Eric Clapton", (s1, s2) -> factory.createName(s1, s2));
+```
+
+---
+class: center, middle
+
+# Interfaces fonctionnelles du JDK
+
+---
+
+# Package java.util.function
+
+* Consumer&lt;T&gt;
+  * void accept(T);
+  
+* Function&lt;T, R&gt;
+  * R apply(T);
+  
+* Supplier&lt;T&gt;
+  * T get();
+  
+* Predicate
+  * boolean test(T);
+
+---
+class: center, middle
+
+# Plusieurs méthodes ?
+
+---
+
+# Java &lt; 8
+```java
+public interface Operation&lt;T&gt;
+{
+    T function();
+    void onSuccess(T res);
+    void onError(Exception ex);
+}
+```
+```java
+public &lt;T&gt; void doSomething(Operation&lt;T&gt; operation) {
+    try {
+        T res = operation.function();
+        operation.onSuccess(res);
+    } catch (Exception ex) {
+        operation.onError(ex);
+    }
+}
+```
+
+---
+
+# Appel très verbeux
+
+```java
+doSomething(new Operation&lt;Object&gt;() {
+    @Override
+    public Object function() {
+        return 42;
+    }
+    @Override
+    public void onSuccess(Object res) {
+        System.out.println(res);
+    }
+    @Override
+    public void onError(Exception ex) {
+        System.err.println("Error: " + ex.getMessage());
+    }
+});
+```
+
+---
+
+# Java 8
+
+* Stratégie = découper l'interface
+
+```java
+public &lt;T&gt; void doSomething(Supplier&lt;T&gt; function,
+                            Consumer&lt;T&gt; onSuccess,
+                            Consumer&lt;Exception&gt; onError) {
+   try {
+       T res = function.get();
+       onSuccess.accept(res);
+   } catch (Exception ex) {
+       onError.accept(ex);
+   }
+}
+```
+
+---
+
+# Appel simplifié
+
+```java
+doSomething(
+    () -> 42,
+    System.out::println,
+    ex -> System.err.println("Error: " + ex.getMessage()));
+```
+
+---
+class: center, middle
+background-image: url(img/background.png)
+
+# Questions ?
+
+Alexis Seigneurin - <img src="img/Twitter_logo_blue.png" class="twitter"/>[@aseigneurin](https://twitter.com/ASeigneurin)
+
+Code : [github.com/aseigneurin/pres-java8-bdxio](https://github.com/aseigneurin/pres-java8-bdxio)
+
+Slides : [aseigneurin.github.io/pres-java8-bdxio](http://aseigneurin.github.io/pres-java8-bdxio)
+
 
     </textarea>
     <script src="remark/remark-latest.min.js" type="text/javascript">
